@@ -7,7 +7,44 @@
     <title>Document</title>
   </head>
   <body>
-    <div id="box">{name}</div>
-    <script src="./test.js"></script>
+    <!-- computed methods 比较 -->
+    <!-- <div id="box">{name}</div> -->
+    <!-- <div id="app">
+      <p>原来的数据: {{ msg }}</p>
+      <p>computed 反转后的数据为: {{reversedMsg}}</p>
+      <p>methods 反转后的数据为: {{ reversedMsg() }}</p>
+    </div> -->
+    <!-- <div id="app">
+      <div>第一次调用computed属性: {{ reversedMsg }}</div>
+      <div>第二次调用computed属性: {{ reversedMsg }}</div>
+      <div>第三次调用computed属性: {{ reversedMsg }}</div>
+      下面是methods调用
+      <div>第一次调用methods方法: {{ reversedMsg1() }}</div>
+      <div>第二次调用methods方法: {{ reversedMsg1() }}</div>
+      <div>第三次调用methods方法: {{ reversedMsg1() }}</div>
+    </div> -->
+
+    <!-- watched -->
+    <!-- <div id="app">
+      <p>空智个人信息情况: {{ obj.basicMsg }}</p>
+      <p>空智今年的年龄: <input type="text" v-model="obj.age" /></p>
+    </div> -->
+
+    <!-- computed实现 -->
+    <!-- <div id="app">
+      <p>原来的数据: {{ msg }}</p>
+      <p>反转后的数据为: {{ reversedMsg }}</p>
+    </div> -->
+
+    <!-- keep-alive -->
+    <div id="app">
+      <button @click="changeTabs('child1')">child1</button>
+      <button @click="changeTabs('child2')">child2</button>
+      <keep-alive>
+        <component :is="chooseTabs"> </component>
+      </keep-alive>
+    </div>
+    <script src="./vue.js"></script>
+    <script src="./keepAlive.js"></script>
   </body>
 </html>
