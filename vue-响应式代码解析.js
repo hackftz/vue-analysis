@@ -4,13 +4,13 @@ class MyVue {
   constructor(options) {
     this.options = options;
 
-    // 数据的初始化
+    // 初始化数据
     this.initData(options);
 
-    // dom元素id
+    // 容器dom id
     let el = this.options.id;
 
-    // 实例的挂载
+    // 挂载元素
     this.$mount(el);
   }
 
@@ -28,17 +28,18 @@ class MyVue {
 
   $mount(el) {
     let innerHtml = document.querySelector(`#${el}`).innerHTML;
-    // 直接改写innerHTML
+
+    // 更新页面
     const updateView = _ => {
+      console.log('元素渲染了！！')
       let key = innerHtml.match(/{(\w+)}/)[1];
 
-      // 第一次挂载到dom元素上的时候 调用了data属性值的get方法
+      // 执行传入方法 第一次挂载到dom元素上的时候 调用了data属性值的get方法 把当前watcher添加到dep.subs
       document.querySelector(`#${el}`).innerHTML = this.options.data[key]; // 调用get方法 首次添加 Dep.target
     };
 
-    // 创建key属性值绑定的 会触发界面渲染更新的 依赖
+    // 调用自身构造函数里的get方法把自己添加到Dep.target 执行传入方法updateView
     const watcher = new Watcher(updateView, true);
-    console.log('%c MyVue => $mount => watcher: ⧭', 'color: #e57373', watcher);
   }
 }
 
@@ -46,12 +47,14 @@ class MyVue {
 // 观察者
 class Observer {
   constructor(data) {
-    // 对每个对象属性重写getter、setter方法
+    // 重写每个属性getter、setter方法
     this.walk(data);
   }
 
   walk(obj) {
     const keys = Object.keys(obj);
+
+    // 遍历对象属性
     for (let i = 0; i < keys.length; i++) {
       const key = keys[i];
       // 数据响应
@@ -63,14 +66,14 @@ class Observer {
 // #################################################################
 // 定义响应数据
 const defineReactive = (obj, key) => {
-  // 每个属性都有一个依赖管理
+  // 每个属性对应一个依赖管理
   const dep = new Dep();
-  console.log('%c defineReactive => dep: ⧭', 'color: #cc0088', dep);
 
   const property = Object.getOwnPropertyDescriptor(obj, key);
+
   let val = obj[key];
 
-  // 存在且不可配置
+  // 如果属性存在但是不可配置，则返回
   if (property && property.configurable === false) {
     return;
   }
@@ -82,8 +85,7 @@ const defineReactive = (obj, key) => {
     enumerable: true,
 
     get() {
-      // 做依赖的收集
-      console.log('%c defineReactive => defineProperty => get: ⧭', 'color: #bfffc8', Dep.target);
+      // 判断Dep.target是否有引用watcher 是则进行依赖收集
       if (Dep.target) {
         dep.depend();
       }
@@ -92,6 +94,7 @@ const defineReactive = (obj, key) => {
     },
 
     set(newVal) {
+      // 值不变 不处理
       if (newVal === val) {
         return;
       }
@@ -117,8 +120,9 @@ class Watcher {
 
   get() {
     console.log('%c Watcher get: ⧭', 'color: #007300', this);
-    // 当前执行的watcher
+    // target指向当前watcher
     Dep.target = this;
+    // 执行元素渲染
     this.getter();
     Dep.target = null;
   }
@@ -148,7 +152,7 @@ class Dep {
 
   // 派发更新
   notify() {
-    // 浅拷贝引用
+    // 浅拷贝
     const subs = this.subs.slice();
 
     // 遍历dep中的依赖，对每个依赖执行更新操作
