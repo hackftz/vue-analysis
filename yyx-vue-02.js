@@ -31,7 +31,8 @@ class Dep {
   // make the update invoked
   notify() {
     // invoke all the subscribers
-    this.subscribers.forEach((sub) => sub());
+    console.log(this.subscribers);
+    // this.subscribers.forEach((sub) => sub());
   }
 }
 
@@ -41,12 +42,14 @@ let activeUpdate;
 
 function autoRun(update) {
   // wrap the update function
+  // execute when init or notify period
   function wrappedUpdate() {
     activeUpdate = wrappedUpdate;
     update();
     activeUpdate = null;
   }
 
+  // init it
   wrappedUpdate();
 }
 
@@ -54,3 +57,5 @@ autoRun(() => {
   dep.depend();
   console.log('update');
 });
+
+dep.notify();
